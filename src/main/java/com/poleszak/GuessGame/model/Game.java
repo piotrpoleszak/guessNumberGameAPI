@@ -34,7 +34,7 @@ public class Game {
 
     @Column(name = "is_active")
     private boolean isActive;
-    
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
