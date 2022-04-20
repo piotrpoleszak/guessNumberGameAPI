@@ -6,12 +6,13 @@ import com.poleszak.GuessGame.exception.GameException;
 import com.poleszak.GuessGame.model.Game;
 import com.poleszak.GuessGame.repository.GameRepository;
 import lombok.AllArgsConstructor;
-import org.apache.catalina.mapper.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 import static com.poleszak.GuessGame.exception.ErrorCode.GAME_ACTIVE_STATUS_NOT_MATCH;
 
@@ -19,30 +20,38 @@ import static com.poleszak.GuessGame.exception.ErrorCode.GAME_ACTIVE_STATUS_NOT_
 @AllArgsConstructor
 public class GameService {
 
+    @Autowired
     private final GameRepository gameRepository;
-    private final Mapper mapper;
+    @Autowired
+    private final GameDtoService gameDtoService;
 
-    public GameDto startNewGame() {
+    public Long startNewGame() {
         gameActiveStatusValidation();
         var newGame = new Game();
         newGame.setActive(true);
         newGame.setCreationDate(LocalDateTime.now());
-        newGame.setSecretNumber(4);
+        newGame.setSecretNumber(secretNumberGenerator());
         newGame.setNumberOfAttempts(0);
 
         gameRepository.save(newGame);
 
-        return null;
+        return newGame.getId();
     }
 
     public List<GameDto> getAllGames() {
-        var allGames = gameRepository.findAll()
+        List<GameDto> allGames = gameRepository.findAll()
                 .stream()
                 .sorted(Comparator.comparing(Game::getId))
-                .map(mapper::toDto)
+                .map(gameDtoService::toBestTenDto)
                 .toList();
 
         return allGames;
+    }
+
+
+    private int secretNumberGenerator() {
+        var rnd = new Random();
+        return rnd.nextInt(100) + 1;
     }
 
     private void gameActiveStatusValidation() {

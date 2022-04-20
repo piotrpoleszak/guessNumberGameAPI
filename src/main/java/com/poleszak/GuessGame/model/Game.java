@@ -38,6 +38,6 @@ public class Game {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @Column(name = "end_game_time")
-    private LocalDateTime endGameTime;
+    @Column(name = "game_time_in_seconds")
+    private int gameTimeInSeconds;
 }

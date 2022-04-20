@@ -1,4 +1,4 @@
 package com.poleszak.GuessGame.dto;
 
-public record GameDto() {
+public record GameDto(Long id) {
 }
