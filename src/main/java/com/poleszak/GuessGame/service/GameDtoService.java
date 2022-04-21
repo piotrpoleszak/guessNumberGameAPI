@@ -1,6 +1,7 @@
 package com.poleszak.GuessGame.service;
 
-import com.poleszak.GuessGame.dto.GameDto;
+import com.poleszak.GuessGame.dto.GameBestTenDto;
+import com.poleszak.GuessGame.dto.StartGameDto;
 import com.poleszak.GuessGame.model.Game;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,11 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class GameDtoService {
 
-    GameDto toBestTenDto(final Game game) {
-        return new GameDto(game.getId());
+    GameBestTenDto toBestTenDto(final Game game) {
+        return new GameBestTenDto(game.getId(), game.getNumberOfAttempts(), game.getGameTimeInSeconds());
+    }
+
+    Game toGame(final StartGameDto gameDto) {
+        return new Game();
     }
 }

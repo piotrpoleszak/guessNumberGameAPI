@@ -1,6 +1,7 @@
 package com.poleszak.GuessGame.service;
 
-import com.poleszak.GuessGame.dto.GameDto;
+import com.poleszak.GuessGame.dto.GameBestTenDto;
+import com.poleszak.GuessGame.dto.StartGameDto;
 import com.poleszak.GuessGame.exception.ErrorSubcode;
 import com.poleszak.GuessGame.exception.GameException;
 import com.poleszak.GuessGame.model.Game;
@@ -25,9 +26,9 @@ public class GameService {
     @Autowired
     private final GameDtoService gameDtoService;
 
-    public Long startNewGame() {
+    public Long startNewGame(StartGameDto startGameDto) {
         gameActiveStatusValidation();
-        var newGame = new Game();
+        var newGame = gameDtoService.toGame(startGameDto);
         newGame.setActive(true);
         newGame.setCreationDate(LocalDateTime.now());
         newGame.setSecretNumber(secretNumberGenerator());
@@ -38,9 +39,10 @@ public class GameService {
         return newGame.getId();
     }
 
-    public List<GameDto> getAllGames() {
-        List<GameDto> allGames = gameRepository.findAll()
+    public List<GameBestTenDto> getBestScores() {
+        List<GameBestTenDto> allGames = gameRepository.findAll()
                 .stream()
+                .filter(v -> v.getGameTimeInSeconds() != 0)
                 .sorted(Comparator.comparing(Game::getId))
                 .map(gameDtoService::toBestTenDto)
                 .toList();
@@ -55,16 +57,21 @@ public class GameService {
     }
 
     private void gameActiveStatusValidation() {
-        var isLastGameActive = gameRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Game::getId).reversed())
-                .findFirst()
-                .get()
-                .isActive();
+        var isEmpty = gameRepository.findAll().isEmpty();
 
-        if (isLastGameActive) {
-            throw new GameException(GAME_ACTIVE_STATUS_NOT_MATCH,
-                    ErrorSubcode.LAST_GAME_IS_STILL_ACTIVE);
+        if (!isEmpty)
+        {
+            var isLastGameActive = gameRepository.findAll()
+                    .stream()
+                    .sorted(Comparator.comparing(Game::getId).reversed())
+                    .findFirst()
+                    .get()
+                    .isActive();
+
+            if (isLastGameActive) {
+                throw new GameException(GAME_ACTIVE_STATUS_NOT_MATCH,
+                        ErrorSubcode.LAST_GAME_IS_STILL_ACTIVE);
+            }
         }
     }
 }
