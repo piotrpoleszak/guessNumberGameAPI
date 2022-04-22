@@ -39,5 +39,5 @@ public class Game {
     private LocalDateTime creationDate;
 
     @Column(name = "game_time_in_seconds")
-    private int gameTimeInSeconds;
+    private Long gameTimeInSeconds;
 }

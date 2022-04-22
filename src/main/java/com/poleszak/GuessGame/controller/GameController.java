@@ -1,7 +1,9 @@
 package com.poleszak.GuessGame.controller;
 
 import com.poleszak.GuessGame.dto.GameBestTenDto;
+import com.poleszak.GuessGame.dto.GuessGameDto;
 import com.poleszak.GuessGame.dto.StartGameDto;
+import com.poleszak.GuessGame.model.Guess;
 import com.poleszak.GuessGame.service.GameService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,11 @@ public class GameController {
     public ResponseEntity<Long> start(@RequestBody StartGameDto startGameDto) {
         var gameId = gameService.startNewGame(startGameDto);
         return ResponseEntity.ok(gameId);
+    }
+
+    @PutMapping("/guess")
+    public ResponseEntity<GuessGameDto> guess(@RequestBody Guess guess) {
+        return ResponseEntity.ok(gameService.guess(guess));
     }
 
     @GetMapping("/getBesScores")
