@@ -4,6 +4,7 @@ import com.poleszak.GuessGame.dto.GameBestTenDto;
 import com.poleszak.GuessGame.dto.GuessGameDto;
 import com.poleszak.GuessGame.dto.StartGameDto;
 import com.poleszak.GuessGame.exception.GameException;
+import com.poleszak.GuessGame.message.Message;
 import com.poleszak.GuessGame.model.Game;
 import com.poleszak.GuessGame.model.Guess;
 import com.poleszak.GuessGame.repository.GameRepository;
@@ -11,7 +12,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
@@ -21,6 +21,7 @@ import java.util.Random;
 import static com.poleszak.GuessGame.exception.ErrorCode.GAME_ACTIVE_STATUS_NOT_MATCH;
 import static com.poleszak.GuessGame.exception.ErrorCode.NOT_FOUND;
 import static com.poleszak.GuessGame.exception.ErrorSubcode.*;
+import static com.poleszak.GuessGame.message.Message.*;
 
 @Service
 @AllArgsConstructor
@@ -47,8 +48,9 @@ public class GameService {
     public List<GameBestTenDto> getBestScores() {
         List<GameBestTenDto> allGames = gameRepository.findAll()
                 .stream()
-                .filter(v -> v.getGameTimeInSeconds() != 0)
+                .filter(v -> v.getGameTimeInSeconds() != null)
                 .sorted(Comparator.comparing(Game::getId))
+                .limit(10)
                 .map(gameDtoService::toBestTenDto)
                 .toList();
 
@@ -64,7 +66,7 @@ public class GameService {
         guessGameValidation(gameId);
         var message = guessMessage(gameId, userGuess);
         var game = gameRepository.getById(gameId);
-        update(game, userGuess);
+        updateAfterGuess(game, userGuess);
         var numberOfAttempts = gameRepository.getById(guess.getGameId())
                 .getNumberOfAttempts();
 
@@ -117,22 +119,22 @@ public class GameService {
         }
     }
 
-    private String guessMessage(Long gameId, int userGuess) {
+    private Message guessMessage(Long gameId, int userGuess) {
         var secretNumber = gameRepository.getById(gameId)
                 .getSecretNumber();
 
         if (secretNumber == userGuess) {
-            return "NUMBER_GUESSED";
+            return NUMBER_GUESSED;
         }
         else if (secretNumber > userGuess) {
-            return "TOO_SMALL";
+            return TOO_SMALL;
         }
         else {
-            return "TOO_LARGE";
+            return TOO_LARGE;
         }
     }
 
-    private void update(Game game, int userGuess) {
+    private void updateAfterGuess(Game game, int userGuess) {
         var numberOfAttempts = game.getNumberOfAttempts();
         numberOfAttempts++;
         game.setNumberOfAttempts(numberOfAttempts);
