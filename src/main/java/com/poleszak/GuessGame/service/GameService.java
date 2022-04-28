@@ -1,6 +1,6 @@
 package com.poleszak.GuessGame.service;
 
-import com.poleszak.GuessGame.dto.GameBestTenDto;
+import com.poleszak.GuessGame.dto.BestTenGameDto;
 import com.poleszak.GuessGame.dto.GuessGameDto;
 import com.poleszak.GuessGame.dto.StartGameDto;
 import com.poleszak.GuessGame.exception.GameException;
@@ -45,8 +45,8 @@ public class GameService {
         return newGame.getId();
     }
 
-    public List<GameBestTenDto> getBestScores() {
-        List<GameBestTenDto> allGames = gameRepository.findAll()
+    public List<BestTenGameDto> getBestScores() {
+        List<BestTenGameDto> allGames = gameRepository.findAll()
                 .stream()
                 .filter(v -> v.getGameTimeInSeconds() != null)
                 .sorted(Comparator.comparing(Game::getId))

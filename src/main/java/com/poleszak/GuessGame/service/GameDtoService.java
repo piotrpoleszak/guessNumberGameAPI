@@ -1,6 +1,6 @@
 package com.poleszak.GuessGame.service;
 
-import com.poleszak.GuessGame.dto.GameBestTenDto;
+import com.poleszak.GuessGame.dto.BestTenGameDto;
 import com.poleszak.GuessGame.dto.GuessGameDto;
 import com.poleszak.GuessGame.dto.StartGameDto;
 import com.poleszak.GuessGame.message.Message;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class GameDtoService {
 
-    GameBestTenDto toBestTenDto(final Game game) {
-        return new GameBestTenDto(game.getId(), game.getNumberOfAttempts(), game.getGameTimeInSeconds());
+    BestTenGameDto toBestTenDto(final Game game) {
+        return new BestTenGameDto(game.getId(), game.getNumberOfAttempts(), game.getGameTimeInSeconds());
     }
 
     GuessGameDto createGuessGameDto(Long gameId, int numberOfAttempts, Message message) {

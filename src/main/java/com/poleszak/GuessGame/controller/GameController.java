@@ -1,6 +1,6 @@
 package com.poleszak.GuessGame.controller;
 
-import com.poleszak.GuessGame.dto.GameBestTenDto;
+import com.poleszak.GuessGame.dto.BestTenGameDto;
 import com.poleszak.GuessGame.dto.GuessGameDto;
 import com.poleszak.GuessGame.dto.StartGameDto;
 import com.poleszak.GuessGame.model.Guess;
@@ -32,7 +32,7 @@ public class GameController {
     }
 
     @GetMapping("/getBesScores")
-    public ResponseEntity<List<GameBestTenDto>> bestScores() {
+    public ResponseEntity<List<BestTenGameDto>> bestScores() {
         return ResponseEntity.ok(gameService.getBestScores());
     }
 }
