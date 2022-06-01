@@ -2,7 +2,6 @@ package com.poleszak.GuessGame.controller;
 
 import com.poleszak.GuessGame.dto.BestTenGameDto;
 import com.poleszak.GuessGame.dto.GuessGameDto;
-import com.poleszak.GuessGame.dto.StartGameDto;
 import com.poleszak.GuessGame.model.Guess;
 import com.poleszak.GuessGame.service.GameService;
 import lombok.AllArgsConstructor;
@@ -21,8 +20,8 @@ public class GameController {
     private final GameService gameService;
 
     @PostMapping("/start")
-    public ResponseEntity<Long> start(@RequestBody StartGameDto startGameDto) {
-        var gameId = gameService.startNewGame(startGameDto);
+    public ResponseEntity<Long> start() {
+        var gameId = gameService.startNewGame();
         return ResponseEntity.ok(gameId);
     }
 

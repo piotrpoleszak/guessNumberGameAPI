@@ -2,7 +2,6 @@ package com.poleszak.GuessGame.service;
 
 import com.poleszak.GuessGame.dto.BestTenGameDto;
 import com.poleszak.GuessGame.dto.GuessGameDto;
-import com.poleszak.GuessGame.dto.StartGameDto;
 import com.poleszak.GuessGame.exception.GameException;
 import com.poleszak.GuessGame.message.Message;
 import com.poleszak.GuessGame.model.Game;
@@ -32,9 +31,9 @@ public class GameService {
     @Autowired
     private final GameDtoService gameDtoService;
 
-    public Long startNewGame(StartGameDto startGameDto) {
+    public Long startNewGame() {
         gameActiveStatusValidation();
-        var newGame = gameDtoService.toGame(startGameDto);
+        var newGame = new Game();
         newGame.setActive(true);
         newGame.setCreationDate(LocalDateTime.now());
         newGame.setSecretNumber(secretNumberGenerator());
@@ -46,15 +45,14 @@ public class GameService {
     }
 
     public List<BestTenGameDto> getBestScores() {
-        List<BestTenGameDto> allGames = gameRepository.findAll()
+
+        return gameRepository.findAll()
                 .stream()
                 .filter(v -> v.getGameTimeInSeconds() != null)
                 .sorted(Comparator.comparing(Game::getId))
                 .limit(10)
                 .map(gameDtoService::toBestTenDto)
                 .toList();
-
-        return allGames;
     }
 
     public GuessGameDto guess(Guess guess) {
@@ -88,8 +86,7 @@ public class GameService {
         {
             var isLastGameActive = gameRepository.findAll()
                     .stream()
-                    .sorted(Comparator.comparing(Game::getId).reversed())
-                    .findFirst()
+                    .max(Comparator.comparing(Game::getId))
                     .get()
                     .isActive();
 
