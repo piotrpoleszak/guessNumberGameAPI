@@ -76,6 +76,11 @@
 			<version>3.0.0</version>
 		</dependency>
 		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>io.cucumber</groupId>
 			<artifactId>cucumber-java</artifactId>
 			<version>6.8.0</version>
@@ -89,6 +94,11 @@
 			<groupId>io.cucumber</groupId>
 			<artifactId>cucumber-spring</artifactId>
 			<version>6.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-jvm-deps</artifactId>
+			<version>1.0.6</version>
 		</dependency>
 	</dependencies>
 
