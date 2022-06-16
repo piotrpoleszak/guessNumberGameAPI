@@ -1,4 +1,4 @@
-package com.poleszak.GuessGame.service;
+package com.poleszak.GuessGame.unit.service;
 
 import com.poleszak.GuessGame.dto.BestTenGameDto;
 import com.poleszak.GuessGame.dto.GuessGameDto;
@@ -33,11 +33,7 @@ public class GameService {
 
     public Long startNewGame() {
         gameActiveStatusValidation();
-        var newGame = new Game();
-        newGame.setActive(true);
-        newGame.setCreationDate(LocalDateTime.now());
-        newGame.setSecretNumber(secretNumberGenerator());
-        newGame.setNumberOfAttempts(0);
+        var newGame = createNewGame();
 
         gameRepository.save(newGame);
 
@@ -56,8 +52,7 @@ public class GameService {
     }
 
     public GuessGameDto guess(Guess guess) {
-        var gameId = gameRepository.getById(guess.getGameId())
-                .getId();
+        var gameId = guess.getGameId();
         var userGuess = guess.getGuess();
 
         gameValidation(gameId);
@@ -73,6 +68,16 @@ public class GameService {
 
 
 
+
+    private Game createNewGame() {
+        var newGame = new Game();
+        newGame.setActive(true);
+        newGame.setCreationDate(LocalDateTime.now());
+        newGame.setSecretNumber(secretNumberGenerator());
+        newGame.setNumberOfAttempts(0);
+
+        return newGame;
+    }
 
     private int secretNumberGenerator() {
         var rnd = new Random();
