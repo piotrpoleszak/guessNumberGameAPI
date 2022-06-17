@@ -1,8 +1,8 @@
-package com.poleszak.GuessGame.unit.service;
+package com.poleszak.GuessGame.service;
 
 import com.poleszak.GuessGame.dto.BestTenGameDto;
 import com.poleszak.GuessGame.dto.GuessGameDto;
-import com.poleszak.GuessGame.message.Message;
+import com.poleszak.GuessGame.exception.GameException;
 import com.poleszak.GuessGame.model.Game;
 import com.poleszak.GuessGame.model.Guess;
 import com.poleszak.GuessGame.repository.GameRepository;
@@ -13,15 +13,13 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.poleszak.GuessGame.message.Message.NUMBER_GUESSED;
-import static com.poleszak.GuessGame.message.Message.TOO_LARGE;
+import static com.poleszak.GuessGame.message.Message.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,6 +53,18 @@ class GameServiceTest {
     }
 
     @Test
+    void shouldThrowExceptionLastGameIsStillActive() {
+        //given
+        var data = List.of(new Game(1L, 20, 0, true, LocalDateTime.now(), 0L));
+
+        //when
+        when(gameRepository.findAll()).thenReturn(data);
+
+        //then
+        assertThrows(GameException.class, () -> gameService.startNewGame());
+    }
+
+    @Test
     void getBestScores() {
         //given
         var expected = new BestTenGameDto(1L, 0, 0L);
@@ -70,7 +80,7 @@ class GameServiceTest {
     }
 
     @Test
-    void shouldGuessANumberAndSetGameAsNotActive() {
+    void shouldGuessAndSetGameAsNotActive() {
         //given
         var game = new Game(1L, 1, 0, true, LocalDateTime.now(), 0L);
         var guess = new Guess(1L, 1);
@@ -88,7 +98,7 @@ class GameServiceTest {
     }
 
     @Test
-    void shouldNotGuessANumberAndReturnMessage() {
+    void shouldNotGuessAndReturnMessageTooLarge() {
         //given
         var game = new Game(1L, 1, 0, true, LocalDateTime.now(), 0L);
         var guess = new Guess(1L, 20);
@@ -103,5 +113,47 @@ class GameServiceTest {
         //then
         assertThat(game.isActive()).isTrue();
         assertThat(response.message()).isEqualTo(TOO_LARGE);
+    }
+
+    @Test
+    void shouldNotGuessAndReturnMessageTooSmall() {
+        //given
+        var game = new Game(1L, 100, 0, true, LocalDateTime.now(), 0L);
+        var guess = new Guess(1L, 20);
+
+        //when
+        when(gameDtoService.createGuessGameDto(1L, 1, TOO_SMALL)).thenReturn(new GuessGameDto(1L, 1, TOO_SMALL));
+        when(gameRepository.existsById(anyLong())).thenReturn(true);
+        when(gameRepository.getById(anyLong())).thenReturn(game);
+
+        var response = gameService.guess(guess);
+
+        //then
+        assertThat(game.isActive()).isTrue();
+        assertThat(response.message()).isEqualTo(TOO_SMALL);
+    }
+
+    @Test
+    void shouldNotGuessAndReturnMessageGameNoActive() {
+        //given
+        var game = new Game(1L, 1, 1, false, LocalDateTime.now(), 0L);
+        var guess = new Guess(1L, 20);
+
+        //when
+        when(gameRepository.existsById(anyLong())).thenReturn(true);
+        when(gameRepository.getById(anyLong())).thenReturn(game);
+
+        //then
+        assertThrows(GameException.class, () -> gameService.guess(guess));
+    }
+
+    @Test
+    void shouldReturnExceptionGameNotFound() {
+        //given
+        var guess = new Guess(1L, 20);
+
+        //when
+        //then
+        assertThrows(GameException.class, () -> gameService.guess(guess));
     }
 }

@@ -1,4 +1,4 @@
-package com.poleszak.GuessGame.unit.service;
+package com.poleszak.GuessGame.service;
 
 import com.poleszak.GuessGame.dto.BestTenGameDto;
 import com.poleszak.GuessGame.dto.GuessGameDto;
