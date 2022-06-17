@@ -2,7 +2,6 @@ package com.poleszak.GuessGame.service;
 
 import com.poleszak.GuessGame.dto.BestTenGameDto;
 import com.poleszak.GuessGame.dto.GuessGameDto;
-import com.poleszak.GuessGame.message.Message;
 import com.poleszak.GuessGame.model.Game;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
