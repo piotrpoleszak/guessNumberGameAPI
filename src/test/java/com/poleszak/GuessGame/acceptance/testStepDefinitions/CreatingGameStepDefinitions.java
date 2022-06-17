@@ -16,7 +16,7 @@ public class CreatingGameStepDefinitions extends AcceptanceTestBase {
 
     @Given("I Set POST game service api endpoint")
     public void set_post_endpoint() {
-        url = "http://localhost:8080/api/start";
+        url = PATH + "/start";
     }
 
     @When("I create new game")
@@ -24,13 +24,12 @@ public class CreatingGameStepDefinitions extends AcceptanceTestBase {
         result = mvc.perform(post(url))
                 .andExpect(status().isOk())
                 .andReturn()
-                .getRequest()
+                .getResponse()
                 .getContentAsString();
     }
 
-    @Then("New game saved in database and return id")
+    @Then("New game saved in database and returned id")
     public void save_game_in_db_and_return_id() {
-        System.out.println(result);
+        assertThat(result).isEqualTo("1");
     }
-
 }

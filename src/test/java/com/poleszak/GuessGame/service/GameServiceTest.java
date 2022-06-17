@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.poleszak.GuessGame.exception.ErrorSubcode.*;
 import static com.poleszak.GuessGame.message.Message.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -59,9 +60,10 @@ class GameServiceTest {
 
         //when
         when(gameRepository.findAll()).thenReturn(data);
+        var result = assertThrows(GameException.class, () -> gameService.startNewGame()).getErrorSubcode();
 
         //then
-        assertThrows(GameException.class, () -> gameService.startNewGame());
+        assertThat(result).isEqualTo(LAST_GAME_IS_STILL_ACTIVE);
     }
 
     @Test
@@ -134,7 +136,7 @@ class GameServiceTest {
     }
 
     @Test
-    void shouldNotGuessAndReturnMessageGameNoActive() {
+    void shouldReturnMessageGameNoActive() {
         //given
         var game = new Game(1L, 1, 1, false, LocalDateTime.now(), 0L);
         var guess = new Guess(1L, 20);
@@ -142,9 +144,10 @@ class GameServiceTest {
         //when
         when(gameRepository.existsById(anyLong())).thenReturn(true);
         when(gameRepository.getById(anyLong())).thenReturn(game);
+        var result = assertThrows(GameException.class, () -> gameService.guess(guess)).getErrorSubcode();
 
         //then
-        assertThrows(GameException.class, () -> gameService.guess(guess));
+        assertThat(result).isEqualTo(GAME_IS_NO_LONGER_ACTIVE);
     }
 
     @Test
@@ -153,7 +156,9 @@ class GameServiceTest {
         var guess = new Guess(1L, 20);
 
         //when
+        var result = assertThrows(GameException.class, () -> gameService.guess(guess)).getErrorSubcode();
+
         //then
-        assertThrows(GameException.class, () -> gameService.guess(guess));
+        assertThat(result).isEqualTo(GAME_NOT_FOUND_IN_DATABASE);
     }
 }

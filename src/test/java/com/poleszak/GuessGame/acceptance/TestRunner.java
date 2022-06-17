@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @CucumberContextConfiguration
 @CucumberOptions(plugin = {"pretty"}, features = "src/test/resources/features")
 @AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class TestRunner {
 }
 
