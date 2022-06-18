@@ -23,7 +23,7 @@ public class Game {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "game_id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "secret_number")

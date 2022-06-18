@@ -66,6 +66,11 @@ public class GameService {
         return gameDtoService.createGuessGameDto(gameId, numberOfAttempts, message);
     }
 
+    public Game getById(Long id) {
+        gameValidation(id);
+        return gameRepository.getById(id);
+    }
+
 
 
 
